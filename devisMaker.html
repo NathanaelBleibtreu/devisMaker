@@ -25,6 +25,9 @@
             float: right;
             display: block;
         }
+        .dead {
+            display: none;
+        }
 
         .red {
             color: red; 
@@ -40,6 +43,14 @@
 <body>
     <div id=devis>
         <div style="display: flexbox;">
+            <div>
+                TEST<br />
+                <ul>
+                    <li v-for="lott in activeLots">
+                        {{ lott.enOption }}
+                    </li>
+                </ul>
+            </div>
             <div class="header">
                 Devis 19055 <br />
                 
@@ -47,9 +58,15 @@
 
                 Description du projet
             </div>
-            <div class="lotsbox" v-for="(lot, i) in lots" style="display: inline-block;">
+            <div class="map">
+                <div v-for="lot in lots">
+                    <input type="checkbox" v-on:click="toggleOption(lot, 'Voulez vous modifier le status du lot : ' + lot.nom + '?')" >{{ lot.nom }}</input>
+                    
+                </div>
+            </div>
+            <div class="lotsbox" v-for="(lot, i) in activeLots" style="display: inline-block;">
                 <span class="lotstitle">{{ lot.nom }}</span> <br /><br />
-                <ul v-for="(item, j) in lots[i].items">
+                <ul v-for="(item, j) in activeLots[i].items">
                     <li>
                         Nom : {{ item.nom }} - 
                         Prix <input v-model="item.prix" size="5" maxlength="5"></input> - 
@@ -80,13 +97,19 @@
                         { nom : 'dressing', prix : 12, qtt : 8 },
                         { nom : 'placard', prix : 45, qtt : 1 },
                         ],
-                        total: ''
+                        total: '',
+                        enOption : false,
                     },
-                    { nom : 'demolition', items : [
+                    { 
+                        nom : 'demolition', 
+                        items : [
                         { nom : 'salle de bain', prix : 12, qtt : 8 },
                         { nom : 'wc', prix : 12, qtt : 8 },
                         { nom : 'carrelage', prix : 12, qtt : 8 },
-                    ]},
+                        ],
+                        total: '',
+                        enOption : false,
+                    },
                 ],
                 lottot: '',
                 total: '0'
@@ -106,12 +129,43 @@
                 },
                 supertotalize: function() {
                     let supertotal = 0;
-                    console.log(this.lots);
+                    //console.log(this.lots);
                     this.lots.forEach(lot => {
                         supertotal += this.totalize(lot); 
                     });
                     return supertotal;
+                },
+                toggleOption: function(lot, message) {
+                    if(!lot.enOption){
+                        if(confirm(message)) {
+                            console.log('Confirmation pour mettre en option le lot' + lot);
+                            lot.enOption = true;
+                        }
+                    } else {
+                        if(confirm(message)) {
+                            console.log('Confirmation pour remettre en certain le lot' + lot);
+                            lot.enOption = false;
+                        }
+                    }
                 }
+            },
+            computed: {
+                activeLots: function(){
+                    activeLots = [];
+                    //console.log('Dans activeLots, this.lots: ' + this.lots),
+                    //console.log(this.lots)  
+                     // array of object=lots
+                    this.lots.forEach(lot => {
+                    //    console.log(lot);
+                        if(!lot.enOption){
+                            activeLots.push(lot)
+                        }
+                    });
+                    //console.log(activeLots)
+                                  
+                    return activeLots
+                    }
+                
             },
             filters: {
                 multiply: function(item, index){
