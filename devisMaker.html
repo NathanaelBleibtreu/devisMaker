@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .lot {
+            font-size: 20;
+            text-decoration: underline;
+        }
+        .total {
+            float: right;
+        }
+
+        .red {
+            color: red; 
+            border: 1px solid red;
+        }
+
+        .green {
+            color: green; 
+            border: 1px solid green
+        }
+    </style>
+</head>
+<body>
+    <div id=devis>
+        <div>
+            <div v-for="(lot, i) in lots">
+                {{ lot.nom }} <br /><br />
+                <ul v-for="(item, j) in lots[i].items">
+                    <li>
+                        Nom : {{ item.nom }} - 
+                        Prix <input v-model="item.prix" size="5" maxlength="5"></input> - 
+                        Quantité <input v-model="item.qtt" size="5" maxlength="5"></input> 
+                        = {{ soustot(item.prix, item.qtt) }}
+                    </li>
+                </ul>
+                <span class="total">{{ totalize(lots[i]) }}</span>
+                <hr>
+
+            </div>
+
+            <hr><hr>
+
+        </div>
+        <!--
+            <div v-for="lot in lots">
+                <span class="lot">Lot : {{ lot.nom }}</span>
+                <div v-for="(item, i) in lot.items">
+                    Nom : {{ item.nom }} - 
+                    Prix <input v-model="item.prix" size="5" maxlength="5"></input> - 
+                    Quantité <input v-model="item.qtt" size="5" maxlength="5"></input> 
+                    = {{ items[i] | multiply(item, i) }}
+                </div>
+            </div>
+        -->
+        <span class="total">Prix total : </span>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#devis',
+            data: {
+                lots: [
+                    { 
+                        nom : 'menuiserie', 
+                        items : [
+                        { nom : 'coffrage', prix : 7, qtt : 2 },
+                        { nom : 'dressing', prix : 12, qtt : 8 },
+                        { nom : 'placard', prix : 45, qtt : 1 },
+                        ],
+                        total: ''
+                    },
+                    { nom : 'demolition', items : [
+                        { nom : 'salle de bain', prix : 12, qtt : 8 },
+                        { nom : 'wc', prix : 12, qtt : 8 },
+                        { nom : 'carrelage', prix : 12, qtt : 8 },
+                    ]},
+                ],
+                lottot: '',
+                total: '0'
+            },
+            methods: {
+                soustot: function(prix, qtt){
+                    return prix*qtt
+                },
+                totalize: function(lot){
+                        let totaldulot = 0;
+                        lot.items.forEach(item => {
+                            let soustot = item.prix*item.qtt;
+                            console.log(soustot)
+                            totaldulot += soustot;
+                            console.log(totaldulot)
+                        });
+                        lot.total = totaldulot;
+                        return totaldulot;
+                }
+            },
+            filters: {
+                multiply: function(item, index){
+                    console.log(item);
+                    console.log(index);
+                    return item[index].qtt*item[index].prix
+                }
+            }
+        })
+    </script>
+</body>
+</html>
