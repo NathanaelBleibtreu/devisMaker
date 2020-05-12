@@ -6,9 +6,41 @@
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 33px;
+            background-color: rgb(0, 0, 0);
+            color: aquamarine;
+            font-family: monospace;
+            display: inline-flex;
+        }
+        .navbar ul li {
+            color: black;
+            display: inline;
+            background-color: bisque;
+
+        }
         .header {
             size: 0.8em;
             margin: 33px;
+            padding: 33px;
+            line-height: 1.5em;
+        }
+        .map {
+            width: 80vw;
+            background-color: rgba(236, 236, 236, 0.925);
+            padding-left: 66px;
+        }
+        .bottomfixed {
+            padding: 2px;
+            display: block;
+            position: fixed;
+            width: 100%;
+            height: 50px;
+            bottom: 0px;
+            background-color: rgb(203, 233, 226);
         }
         .lotsbox {
             margin: 30px;
@@ -28,22 +60,36 @@
         .dead {
             display: none;
         }
-
-        .red {
-            color: red; 
-            border: 1px solid red;
+        input[type=text] {
+            font-size: 1em;
+            padding: 3px;
+            background-color: lightblue;
+            border: 0;
+            text-align: end;
         }
-
-        .green {
-            color: green; 
-            border: 1px solid green
+        input[type=text]:focus {
+            background-color: #fff;
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <span>devisMaker</span>
+        <ul>
+            <li>Home</li>
+            <li>Tableau de bord</li>
+            <li>Profil</li>
+            <li>Bases de prix</li>
+            <li>Paramètres</li>
+        </ul>
+        <ul>
+            <li>listes des devis ouverts</li>
+        </ul>
+    </nav>
     <div id=devis>
         <div style="display: flexbox;">
-            <div>
+            <div style="display:none">
                 TEST<br />
                 <ul>
                     <li v-for="lott in activeLots">
@@ -52,13 +98,19 @@
                 </ul>
             </div>
             <div class="header">
-                Devis 19055 <br />
-                
-                Client : Monsieur Untel Macheans / 123, rue Bidon - 46 980 Fruch-sous-Varne <br />
-
-                Description du projet
+                Devis {{ infos.numdevis }} <br />
+                <br />
+                Client : <br />
+                {{ infos.nomclient }} {{ infos.prenomclient }} <br />
+                <br />
+                {{ infos.adresseclient[0] }} <br />
+                {{ infos.adresseclient[1] }} <br />
+                {{ infos.adresseclient[2] }} <br />
+                <br />
+                Description du projet : {{ infos.description }}
             </div>
             <div class="map">
+                Arborescence du projet :
                 <div v-for="lot in lots">
                     <input type="checkbox" v-on:click="toggleOption(lot, 'Voulez vous modifier le status du lot : ' + lot.nom + '?')" >{{ lot.nom }}</input>
                     
@@ -68,13 +120,13 @@
                 <span class="lotstitle">{{ lot.nom }}</span> <br /><br />
                 <ul v-for="(item, j) in activeLots[i].items">
                     <li>
-                        Nom : {{ item.nom }} - 
-                        Prix <input v-model="item.prix" size="5" maxlength="5"></input> - 
-                        Quantité <input v-model="item.qtt" size="5" maxlength="5"></input> 
+                        {{ item.nom }} - 
+                        Prix <input type ="text" v-model="item.prix" size="3" maxlength="5"></input> - 
+                        Qtt <input type="text" v-model="item.qtt" size="3" maxlenght="5"></input> 
                         = {{ soustot(item.prix, item.qtt) }}
                     </li>
                 </ul>
-                <span class="total">Total {{ lot.nom }} : {{ totalize(activeLots[i]) }}</span>
+                <span class="total">Total {{ lot.nom }} : {{ totalize(activeLots[i]) }} {{ config.money }}</span>
                 <hr>
 
             </div>
@@ -82,13 +134,24 @@
             <hr><hr>
 
         </div>
-
-        <span class="total">Prix total : {{ supertotalize(lots) }} </span>
+        <div class="bottomfixed">
+            <span class="total">Prix total : {{ supertotalize(lots) }} {{ config.money }}</span>
+        </div>
     </div>
     <script>
         var app = new Vue({
             el: '#devis',
             data: {
+                config: {
+                    money : "€"
+                },
+                infos: { 
+                    numdevis: "D19007",
+                    nomclient : "Michel",
+                    prenomclient : "Martine",
+                    adresseclient : [ "123, rue Bidon", "75014", "Paris"],
+                    description : "Description du projet",
+                },
                 lots: [
                     { 
                         nom : 'menuiserie', 
