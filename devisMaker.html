@@ -74,7 +74,7 @@
                         = {{ soustot(item.prix, item.qtt) }}
                     </li>
                 </ul>
-                <span class="total">Total {{ lot.nom }} : {{ totalize(lots[i]) }}</span>
+                <span class="total">Total {{ lot.nom }} : {{ totalize(activeLots[i]) }}</span>
                 <hr>
 
             </div>
@@ -97,7 +97,7 @@
                         { nom : 'dressing', prix : 12, qtt : 8 },
                         { nom : 'placard', prix : 45, qtt : 1 },
                         ],
-                        total: '',
+                        //total: '',
                         enOption : false,
                     },
                     { 
@@ -107,7 +107,7 @@
                         { nom : 'wc', prix : 12, qtt : 8 },
                         { nom : 'carrelage', prix : 12, qtt : 8 },
                         ],
-                        total: '',
+                        //total: '',
                         enOption : false,
                     },
                 ],
@@ -120,18 +120,23 @@
                 },
                 totalize: function(lot){
                         let totaldulot = 0;
+                        console.log(this.activeLots);
                         lot.items.forEach(item => {
                             let soustot = item.prix*item.qtt;
                             totaldulot += soustot;
+                            console.log(item.nom);
+                            console.log(soustot);
                         });
-                        lot.total = totaldulot;
+                        console.log(totaldulot);
+                        //lot.total = totaldulot;
                         return totaldulot;
                 },
                 supertotalize: function() {
                     let supertotal = 0;
                     //console.log(this.lots);
-                    this.lots.forEach(lot => {
+                    this.activeLots.forEach(lot => {
                         supertotal += this.totalize(lot); 
+                        console.log(lot.nom)
                     });
                     return supertotal;
                 },
