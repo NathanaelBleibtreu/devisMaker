@@ -147,7 +147,13 @@
                 <ul v-for="(item, j) in activeLots[i].items">
                     <li>
                         {{ item.nom }} - 
+
                         Prix <input type ="text" v-model="item.prix" size="3" maxlength="5"></input> - 
+
+                    <select v-model="item.selectedunit">
+                            <option value="" disabled selected>{{ item.selectedunit }}</option>
+                            <option v-for="unit in units" :value="unit" :selected="item.selectedunit == unit">{{ unit }}</option>
+                        </select>
                         Qtt <input type="text" v-model="item.qtt" size="3" maxlenght="5"></input> 
                         = {{ soustot(item.prix, item.qtt) }}
                         <br /> {{ item.descr }}
@@ -183,9 +189,9 @@
                     { 
                         nom : 'menuiserie', 
                         items : [
-                        { nom : 'coffrage', prix : 7, qtt : 2 },
-                        { nom : 'dressing', prix : 12, qtt : 8 },
-                        { nom : 'placard', prix : 45, qtt : 1 },
+                        { nom : 'coffrage', prix : 7, selectedunit : 'm2', qtt : 2 },
+                        { nom : 'dressing', prix : 12,  selectedunit : 'Unitaire',  qtt : 8 },
+                        { nom : 'placard', prix : 45,  selectedunit : 'Unitaire',  qtt : 1 },
                         ],
                         //total: '',
                         enOption : false,
@@ -193,16 +199,17 @@
                     { 
                         nom : 'demolition', 
                         items : [
-                        { nom : 'salle de bain', prix : 12, qtt : 8, descr : 'Enlèvement d\'une baignoire et d\'un meuble-vasque' },
-                        { nom : 'wc', prix : 12, qtt : 8 },
-                        { nom : 'carrelage', prix : 12, qtt : 8 },
+                        { nom : 'salle de bain', prix : 12, selectedunit : "m3", qtt : 8, descr : 'Enlèvement d\'une baignoire et d\'un meuble-vasque' },
+                        { nom : 'wc', prix : 12, selectedunit : 'Unitaire', qtt : 8 },
+                        { nom : 'carrelage', prix : 12, selectedunit : 'm2', qtt : 8 },
                         ],
                         //total: '',
                         enOption : false,
                     },
                 ],
                 lottot: '',
-                total: '0'
+                total: '0',
+                units: [ 'Unitaire', 'm2', 'm3', 'autre' ]
             },
             methods: {
                 addItem: function(lot){
@@ -267,6 +274,10 @@
                     //console.log(activeLots)
                                   
                     return activeLots
+                    },
+
+                unitselectorval: function(u) {
+                    return this.units[u]
                     }
                 
             },
