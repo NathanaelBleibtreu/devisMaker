@@ -5,84 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <style>
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 67px;
-            background-color: rgb(0, 0, 0);
-            color: aquamarine;
-            font-family: monospace;
-            display: inline-flex;
-        }
-        .navbar ul li {
-            color: black;
-            display: inline;
-            background-color: bisque;
-            padding: 2px;
-            font-size: 1.2em;
-        }
-        .header {
-            size: 0.8em;
-            margin: 67px;
-            padding: 33px;
-            line-height: 1.5em;
-        }
-        .map {
-            width: 80vw;
-            padding: 5px;
-            background-color: rgba(236, 236, 236, 0.925);
-            margin-left: 67px;
-            font-family: monospace;
-            border-radius: 5px;
-        }
-        .bottomfixed {
-            padding: 2px;
-            display: block;
-            position: fixed;
-            width: 100%;
-            height: 50px;
-            bottom: 0px;
-            background-color: rgb(203, 233, 226);
-        }
-        .lotsbox {
-            width: 90%;
-            margin: 33px;
-            display: grid;
-            background-color: rgba(211, 237, 255, 0.884);
-        }
-        .lotstitle {
-            font-size: 20;
-            text-decoration: underline;
-        }
-        .total {
-            border-top: 30px;
-            border-bottom: 10px solid rgb(41, 113, 134);
-            float: right;
-            display: block;
-        }
-        .dead {
-            display: none;
-        }
-        input[type=text] {
-            font-size: 1em;
-            padding: 3px;
-            background-color: lightblue;
-            border: 0;
-            text-align: end;
-        }
-        input[type=text]:focus {
-            background-color: #fff;
-            border: 1px solid black;
-        }
-        .literalinput {
-            border: none;
-        }
-        .literalinput:focus {
-            border: 1px solid lightgray;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css" media="all"/>
 </head>
 <body>
     <nav class="navbar">
@@ -131,19 +54,29 @@
                         \_____ <input class="literalinput" v-model="item.nom"></input> <br />
                     </div>
                     <br />
-                    <span @click="addItem(lot)" style="margin-left: 55px;color:white; background-color: black;">+ ajouter un item</span>
-                    <input style="width: 15px"></input>
-                    <select style="width: 15px">
-                        <option>choix 1</option>
-                        <option>choix 2</option>
-                        <option>choix 3</option>
-                    </select>
-                    <br /> <br />
+                    <div class="addItem">
+                        ajouter un item : 
+                        <input style="width: 50px"></input>
+                        <select style="width: 550px">
+                            <option v-for="item in lot.items" value="item">{{ verbose(item) }}</option>
+                        </select>
+                        <span class="plus" @click="addItem(lot)">+</span>
+                    </div>
+                    <br /><br />
+                    <br /><br />
                 </div>
                 <span @click="addLot" style="margin-left: 10px;color:white; background-color: black;">+ ajouter un lot</span>
             </div>
+
+
+
+
             <div class="lotsbox" v-for="(lot, i) in activeLots" style="display: inline-block;">
-                <span class="lotstitle">{{ lot.nom }}</span> <br /><br />
+                <input type="text" style="text-align: left; padding-left: 0.5em;" class="lotstitle" v-model="lot.nom">
+                    {{ lot.nom }}
+                </span> 
+                <br />
+                <br />
                 <ul v-for="(item, j) in activeLots[i].items">
                     <li>
                         {{ item.nom }} - 
@@ -189,9 +122,9 @@
                     { 
                         nom : 'menuiserie', 
                         items : [
-                        { nom : 'coffrage', prix : 7, selectedunit : 'm2', qtt : 2 },
-                        { nom : 'dressing', prix : 12,  selectedunit : 'Unitaire',  qtt : 8 },
-                        { nom : 'placard', prix : 45,  selectedunit : 'Unitaire',  qtt : 1 },
+                        { nom : 'coffrage', prix : 7, selectedunit : '/ m2', qtt : 2, descr : 'Réalisation d\'une cloison afin de dissimuler les conduits' },
+                        { nom : 'dressing', prix : 12,  selectedunit : 'Unitaire',  qtt : 8, descr : 'Réalisation d\'un dressing sur mesure' },
+                        { nom : 'placard', prix : 45,  selectedunit : 'Unitaire',  qtt : 1, descr : 'Aménagement d\'un placard toute hauteur' },
                         ],
                         //total: '',
                         enOption : false,
@@ -200,8 +133,8 @@
                         nom : 'demolition', 
                         items : [
                         { nom : 'salle de bain', prix : 12, selectedunit : "m3", qtt : 8, descr : 'Enlèvement d\'une baignoire et d\'un meuble-vasque' },
-                        { nom : 'wc', prix : 12, selectedunit : 'Unitaire', qtt : 8 },
-                        { nom : 'carrelage', prix : 12, selectedunit : 'm2', qtt : 8 },
+                        { nom : 'wc', prix : 12, selectedunit : 'Unitaire', qtt : 8, descr : 'Enlèvement d\'unbloc wc standard' },
+                        { nom : 'carrelage', prix : 12, selectedunit : 'm2', qtt : 8, descr : 'Carrelage en grès' },
                         ],
                         //total: '',
                         enOption : false,
@@ -257,6 +190,11 @@
                             lot.enOption = false;
                         }
                     }
+                },
+
+                verbose: function(item) {
+                    description = item.nom + " : " + item.descr + + item.prix + ' ' + this.config.money + (item.selectedunit=="Unitaire"? '' : item.selectedunit);
+                    return description
                 }
             },
             computed: {
@@ -274,11 +212,12 @@
                     //console.log(activeLots)
                                   
                     return activeLots
-                    },
+                },
 
                 unitselectorval: function(u) {
                     return this.units[u]
-                    }
+                }
+
                 
             },
             filters: {
